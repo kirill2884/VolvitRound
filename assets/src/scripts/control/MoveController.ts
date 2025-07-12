@@ -37,24 +37,43 @@ export default class MoveController extends cc.Component {
         
     }
 
-    onKeyDown(e: cc.Event.EventKeyboard): any{       
-        if(e.keyCode == cc.macro.KEY.left) {
-            this.side = -1
-        } else if (e.keyCode == cc.macro.KEY.right) {
-            this.side = 1
-        }
-        const state = this.animationMove.getAnimationState('cat_right');
+    onKeyDown(e: cc.Event.EventKeyboard): any{   
+        if(this.moveKeys(e.keyCode) || this.jumpKeys(e.keyCode)){
+            const state = this.animationMove.getAnimationState('cat_move');
 
-        if (!state.isPlaying) {
-            this.animationMove.play('cat_right');
+            if (!state.isPlaying) {
+                this.animationMove.play('cat_move');
+            }
+
+            if(e.keyCode == cc.macro.KEY.left || e.keyCode == cc.macro.KEY.a) {
+                this.side = -1
+                this.node.scaleX = -0.3
+            } else if (e.keyCode == cc.macro.KEY.right || e.keyCode == cc.macro.KEY.d) {
+                this.node.scaleX = 0.3
+                this.side = 1
+            }
+
+
         }
+        
+
+
+
+    }
+
+    moveKeys(keyCode: number) {
+        return keyCode == cc.macro.KEY.left || keyCode == cc.macro.KEY.right || keyCode == cc.macro.KEY.a || keyCode == cc.macro.KEY.d
+    }
+
+    jumpKeys(keyCode: number) {
+        return keyCode == cc.macro.KEY.space || keyCode == cc.macro.KEY.w
     }
 
     onKeyUp(e: cc.Event.EventKeyboard): any{
-        if(e.keyCode == cc.macro.KEY.left || e.keyCode == cc.macro.KEY.right) {
+        if(this.moveKeys(e.keyCode)) {
             this.side = 0
         } 
-        this.animationMove.stop('cat_right')
+        this.animationMove.stop('cat_move')
     }
 
     // onTouchStart(e:cc.Event.EventTouch){

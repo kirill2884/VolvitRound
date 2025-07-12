@@ -24,7 +24,7 @@ export default class JumpController extends cc.Component {
     onKeyDown(e: cc.Event.EventKeyboard) {
         this.keysPressed.add(e.keyCode);
 
-        if (e.keyCode === cc.macro.KEY.space && !this.isJumping) {
+        if (this.jumpKeys(e.keyCode) && !this.isJumping) {
             this.handleJump(e);
         }
     }
@@ -36,9 +36,9 @@ export default class JumpController extends cc.Component {
     handleJump(e: cc.Event.EventKeyboard) {
         const originalY = this.node.y;
          
-        if(e.keyCode == cc.macro.KEY.space && !this.isJumping){
+        if(this.jumpKeys(e.keyCode) && !this.isJumping){
             this.isJumping = true;
-            
+
             cc.tween(this.node)
                 .to(this.duration, { y: originalY + this.height }, { easing: 'cubicOut' })
                 .to(this.duration, { y: originalY }, { easing: 'cubicIn' })
@@ -48,6 +48,10 @@ export default class JumpController extends cc.Component {
                 .start();
         }
 
+    }
+
+    jumpKeys(keyCode: number) {
+        return keyCode == cc.macro.KEY.space || keyCode == cc.macro.KEY.w
     }
 
     update(dt: number) {
