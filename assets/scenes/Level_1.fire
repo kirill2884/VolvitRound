@@ -450,6 +450,7 @@
     },
     "_enabled": true,
     "height": 200,
+    "width": 200,
     "duration": 0.2,
     "_id": "0cjQFtVptO2bc73jk2jWkL"
   },
