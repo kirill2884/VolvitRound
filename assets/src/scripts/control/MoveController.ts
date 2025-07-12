@@ -18,13 +18,14 @@ export default class MoveController extends cc.Component {
 
     @property
     Delta:number = 20;
+    private animationMove:cc.Animation = null
 
 
     protected onLoad(): void {
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this)
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this)
-
+        this.animationMove = this.node.getComponent(cc.Animation);
         // this.maxPos = this.node.parent.width/2 - this.node.width/2;
         // this.minPos = - this.node.parent.width/2 + this.node.width/2;
 
@@ -42,12 +43,18 @@ export default class MoveController extends cc.Component {
         } else if (e.keyCode == cc.macro.KEY.right) {
             this.side = 1
         }
+        const state = this.animationMove.getAnimationState('cat_right');
+
+        if (!state.isPlaying) {
+            this.animationMove.play('cat_right');
+        }
     }
 
     onKeyUp(e: cc.Event.EventKeyboard): any{
         if(e.keyCode == cc.macro.KEY.left || e.keyCode == cc.macro.KEY.right) {
             this.side = 0
         } 
+        this.animationMove.stop('cat_right')
     }
 
     // onTouchStart(e:cc.Event.EventTouch){
@@ -91,7 +98,7 @@ export default class MoveController extends cc.Component {
     }
 
     update (dt) {
-
+        
         // if (this.moving) {
         //     this.touchMoveUpdate()
         //     return

@@ -470,7 +470,7 @@
         "__uuid__": "dbf55ebd-04e9-40c2-95d0-6136dc1be84d"
       }
     ],
-    "playOnLoad": true,
+    "playOnLoad": false,
     "_id": "7aUXuVgfxA67mvgkiYS4Ci"
   },
   {
