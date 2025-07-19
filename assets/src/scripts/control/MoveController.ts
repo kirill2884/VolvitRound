@@ -25,7 +25,7 @@ export default class MoveController extends cc.Component {
 
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this)
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this)
-        this.animationMove = this.node.getComponent(cc.Animation);
+        this.animationMove = this.node.getChildByName('visual').getComponent(cc.Animation);
         // this.maxPos = this.node.parent.width/2 - this.node.width/2;
         // this.minPos = - this.node.parent.width/2 + this.node.width/2;
 

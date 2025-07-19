@@ -17894,6 +17894,11 @@ declare namespace cc {
 			*/
 			emit(params: any[]): void;		
 		}	
+
+
+        export function getCurrentlocation() {
+            throw new Error("Function not implemented.");
+        }
 	}
 		
 	/****************************************************
