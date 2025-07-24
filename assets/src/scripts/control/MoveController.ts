@@ -12,9 +12,9 @@ export default class MoveController extends cc.Component {
 
     side:number = 0;
     moving:boolean = false;
-    // maxPos: number;
-    // minPos: number;
     x:number;
+
+    keyPressed:Set<number>;
 
     @property
     Delta:number = 20;
@@ -22,7 +22,7 @@ export default class MoveController extends cc.Component {
 
 
     protected onLoad(): void {
-
+        this.keyPressed = new Set()
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_DOWN, this.onKeyDown, this)
         cc.systemEvent.on(cc.SystemEvent.EventType.KEY_UP, this.onKeyUp, this)
         this.animationMove = this.node.getChildByName('visual').getComponent(cc.Animation);
@@ -37,7 +37,8 @@ export default class MoveController extends cc.Component {
         
     }
 
-    onKeyDown(e: cc.Event.EventKeyboard): any{   
+    onKeyDown(e: cc.Event.EventKeyboard): any{ 
+        this.keyPressed.add(e.keyCode)  
         if(this.moveKeys(e.keyCode) || this.jumpKeys(e.keyCode)){
             const state = this.animationMove.getAnimationState('cat_move');
 
@@ -70,10 +71,16 @@ export default class MoveController extends cc.Component {
     }
 
     onKeyUp(e: cc.Event.EventKeyboard): any{
+        this.keyPressed.delete(e.keyCode) 
+        
         if(this.moveKeys(e.keyCode)) {
             this.side = 0
         } 
-        this.animationMove.stop('cat_move')
+
+        if(this.keyPressed.size == 0){
+            this.animationMove.stop('cat_move')
+        }
+       
     }
 
     // onTouchStart(e:cc.Event.EventTouch){
