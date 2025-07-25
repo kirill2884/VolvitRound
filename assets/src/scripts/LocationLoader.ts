@@ -6,8 +6,22 @@ export default class LocationLoader extends cc.Component {
     @property(cc.Node)
     mainHero:cc.Node = null;
 
+    @property(cc.Node)
+    groundNode:cc.Node = null;
+    private groundRigitBody:cc.RigidBody = null;
+    private groundSprite:cc.Sprite = null
+    private grounSpriteFrame:cc.SpriteFrame = null;
+
+
+    @property({ type: [cc.String] })
+    locationWitoutGround:string[] = []
+
+
      onLoad () {
-         
+
+        this.groundRigitBody = this.groundNode.getComponent(cc.RigidBody)  
+        this.groundSprite = this.groundNode.getComponent(cc.Sprite)
+        this.grounSpriteFrame = this.groundSprite.spriteFrame;
      }
 
     loadlocation(name: string, previus:boolean, next:boolean) {
@@ -27,6 +41,14 @@ export default class LocationLoader extends cc.Component {
             }
 
         this.node.addChild(locationNode); 
+
+        if(this.locationWitoutGround.includes(name)){
+            this.groundRigitBody.active = false
+            this.groundSprite.spriteFrame = null
+        } else {
+            this.groundRigitBody.active = true
+            this.groundSprite.spriteFrame = this.grounSpriteFrame
+        }
 
         this.scheduleOnce(() => {
             let startPoint = null; 
