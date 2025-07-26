@@ -1,3 +1,5 @@
+import CameraController from "./camera/CameraController";
+
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -5,14 +7,17 @@ export default class LocationLoader extends cc.Component {
 
     @property(cc.Node)
     mainHero:cc.Node = null;
-
+    @property(cc.Node)
+    mainCamera:cc.Node = null;
     @property(cc.Node)
     groundNode:cc.Node = null;
+
     private groundRigitBody:cc.RigidBody = null;
     private groundSprite:cc.Sprite = null
     private grounSpriteFrame:cc.SpriteFrame = null;
     private leftRestore:boolean = false
     private currentLocation:cc.Node = null;
+    private cameraController:CameraController = null
 
     @property({ type: [cc.String] })
     locationWitoutGround:string[] = []
@@ -20,10 +25,11 @@ export default class LocationLoader extends cc.Component {
 
      onLoad () {
         cc.systemEvent.on('restore-hero',this.restoreHero,this)
-
+        this.cameraController = this.mainCamera.getComponent(CameraController)
         this.groundRigitBody = this.groundNode.getComponent(cc.RigidBody)  
         this.groundSprite = this.groundNode.getComponent(cc.Sprite)
         this.grounSpriteFrame = this.groundSprite.spriteFrame;
+
      }
 
     loadlocation(name: string, previus:boolean, next:boolean) {
@@ -34,7 +40,7 @@ export default class LocationLoader extends cc.Component {
         }
 
         this.currentLocation = cc.instantiate(prefab);
-
+        this.mainCamera.x = 0
         this.node.removeAllChildren(); 
         const rigidBody = this.mainHero.getComponent(cc.RigidBody);
             
@@ -57,11 +63,15 @@ export default class LocationLoader extends cc.Component {
                 if(next){
                     this.leftRestore = true
                     startPoint = this.currentLocation.getChildByName("StartPointLeft");
+                    this.mainCamera.x = 0
+                    this.cameraController.setLeft(true)
                 }
 
                 if(previus){
                     this.leftRestore = false
                     startPoint = this.currentLocation.getChildByName("StartPointRight");
+                    this.mainCamera.x = 1080
+                    this.cameraController.setLeft(false)
                 }
             
 
@@ -85,8 +95,10 @@ export default class LocationLoader extends cc.Component {
         let restorePosition = null; 
         if(this.leftRestore){
             restorePosition = this.currentLocation.getChildByName("StartPointLeft");
+            this.mainCamera.x = 0
         } else {
             restorePosition = this.currentLocation.getChildByName("StartPointRight");
+             this.mainCamera.x = 1080
         }
         this.mainHero.setPosition(restorePosition.getPosition());
 
