@@ -11,13 +11,15 @@ export default class LocationLoader extends cc.Component {
     private groundRigitBody:cc.RigidBody = null;
     private groundSprite:cc.Sprite = null
     private grounSpriteFrame:cc.SpriteFrame = null;
-
+    private leftRestore:boolean = false
+    private currentLocation:cc.Node = null;
 
     @property({ type: [cc.String] })
     locationWitoutGround:string[] = []
 
 
      onLoad () {
+        cc.systemEvent.on('restore-hero',this.restoreHero,this)
 
         this.groundRigitBody = this.groundNode.getComponent(cc.RigidBody)  
         this.groundSprite = this.groundNode.getComponent(cc.Sprite)
@@ -31,7 +33,7 @@ export default class LocationLoader extends cc.Component {
             return;
         }
 
-        const locationNode = cc.instantiate(prefab);
+        this.currentLocation = cc.instantiate(prefab);
 
         this.node.removeAllChildren(); 
         const rigidBody = this.mainHero.getComponent(cc.RigidBody);
@@ -40,7 +42,7 @@ export default class LocationLoader extends cc.Component {
                 rigidBody.active = false;
             }
 
-        this.node.addChild(locationNode); 
+        this.node.addChild(this.currentLocation); 
 
         if(this.locationWitoutGround.includes(name)){
             this.groundRigitBody.active = false
@@ -52,29 +54,46 @@ export default class LocationLoader extends cc.Component {
 
         this.scheduleOnce(() => {
             let startPoint = null; 
-            if(next){
-                startPoint = locationNode.getChildByName("StartPointLeft");
-            }
+                if(next){
+                    this.leftRestore = true
+                    startPoint = this.currentLocation.getChildByName("StartPointLeft");
+                }
 
-            if(previus){
-                startPoint = locationNode.getChildByName("StartPointRight");
-            }
+                if(previus){
+                    this.leftRestore = false
+                    startPoint = this.currentLocation.getChildByName("StartPointRight");
+                }
             
 
-            if (startPoint && this.mainHero) {
-                this.mainHero.setPosition(startPoint.getPosition());
+                if (startPoint && this.mainHero) {
+                    this.mainHero.setPosition(startPoint.getPosition());
 
-                if (rigidBody) {
-                    rigidBody.linearVelocity = cc.v2(0, 0);
-                    rigidBody.angularVelocity = 0;
-                    rigidBody.active = true;
+                    if (rigidBody) {
+                        rigidBody.linearVelocity = cc.v2(0, 0);
+                        rigidBody.angularVelocity = 0;
+                        rigidBody.active = true;
+                    }
+                } else {
+                    cc.warn("StartPoint или mainHero не найдены");
                 }
-            } else {
-                cc.warn("StartPoint или mainHero не найдены");
-            }
-        }, 0);
+            }, 0);
 
-    });
-}
+        });
+    }
+
+    restoreHero(){
+        let restorePosition = null; 
+        if(this.leftRestore){
+            restorePosition = this.currentLocation.getChildByName("StartPointLeft");
+        } else {
+            restorePosition = this.currentLocation.getChildByName("StartPointRight");
+        }
+        this.mainHero.setPosition(restorePosition.getPosition());
+
+    }
+
+    onDestroy(): void {
+        cc.systemEvent.off("restore-hero")
+    }
 
 }

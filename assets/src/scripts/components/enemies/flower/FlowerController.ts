@@ -22,6 +22,16 @@ export default class FlowerController extends cc.Component {
 
      }
 
+     onBeginContact(contact: cc.PhysicsContact, self: cc.Collider, other: cc.Collider) {
+        if (this.activeThorns) {
+            if (other.node.name === 'cat') {
+                console.log("hit-hero");
+                
+                // Эмитим событие
+                cc.systemEvent.emit('hit-enemy');
+            }
+        }
+    }
 
     showThorns() {
         const state = this.animationFlower.getAnimationState('show_thorns');
